@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/sam/Software/MaxSubArray/MaxSubArray/Run.cpp
+ex_MaxSubArray.h
+/home/sam/Software/MaxSubArray/MaxSubArray/ex_MaxSubArray.h
+Shared.h
+/home/sam/Software/MaxSubArray/MaxSubArray/Shared.h
+
+inc/Shared.h
+
+inc/ex_MaxSubArray.h
+iostream
+-
+fstream
+-
+sstream
+-
+string
+-
+omp.h
+-
+vector
+-
+time.h
+-
+stdio.h
+-
+stdlib.h
+-
+algorithm
+-
+Shared.h
+inc/Shared.h
+
