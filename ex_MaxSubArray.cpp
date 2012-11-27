@@ -16,7 +16,7 @@
  *********************************************************************/
 
 
-#include "cuExternsTest.h"
+//#include "cuExternsTest.h"
 #include "ex_MaxSubArray.h"
 
 using std::cout;
@@ -580,105 +580,4 @@ void MaxSubArray::getMax_CPU(int* inputArray, int numCores, int numRows, int num
 	}
 
 	cout<<"CPU implementation - Done"<<endl;
-}
-
-/*
- * This functions is divided in 2 stages. In STAGE_1 we search for the maximum
- * for each row equals to g. So if the 2D array is 1024x1024 we will have 1024
- * maximum. In STAGE_2, we perform a reduction process to get the maximum of  
- * these maximums.
- */
-void MaxSubArray::getMax_CUDA(int* hostInputArray, int numRows, int numCols, int numItr)
-{
-	cout<<"Starting CUDA implementation"<<endl;
-
-	for (int itr = 0; itr < numItr; itr++)
-	{
-		// Memory required for input & output arrays
-		const int inputArraySize  = sizeof(int) * numRows * numCols;
-		const int prefixSum       = sizeof(int) * numRows * numCols;
-		const int outputArraySize = sizeof(Max) * numRows * numRows;
-
-		// Input & output arrays on the device side
-		int* devInputArray;
-		int* devPrefixSum;
-		Max* devMaxValues;
-
-		// the variable that will hold the maximum of all possible combination on the host side
-		Max* hostMaxValue = (Max*)malloc(sizeof(Max)*1);//outputArraySize);
-
-		// Allocating the device arrays
-		cutilSafeCall(cudaMalloc((void**)&devInputArray, inputArraySize));
-		cutilSafeCall(cudaMalloc((void**)&devPrefixSum, prefixSum));
-		cutilSafeCall(cudaMalloc((void**)&devMaxValues, outputArraySize));
-
-		// Upload the input array to the device side
-		cutilSafeCall(cudaMemcpy(devInputArray, hostInputArray, inputArraySize, cudaMemcpyHostToDevice));
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////
-
-		// Configuring the GPU
-		dim3 cuBlock_1(numRows, 1, 1);
-		dim3 cuGrid_1(numRows/cuBlock_1.x, 1, 1);
-
-		// Invokig the CUDA kernel
-		cuPrefixSum(cuBlock_1, cuGrid_1, devInputArray, devPrefixSum, numRows, numCols);
-			
-		// Checking if kernel execution failed or not
-		cutilCheckMsg("Kernel (cuPrefixSum) execution failed \n");
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////
-
-		// Configuring the GPU
-		dim3 cuBlock_2(32, 32, 1);
-		dim3 cuGrid_2(numRows/cuBlock_2.x, numRows/cuBlock_2.y, 1);
-
-		// Invokig the CUDA kernel
-		cuGetMax(cuBlock_2, cuGrid_2, devMaxValues, devPrefixSum, numRows, numCols);
-
-		// Checking if kernel execution failed or not
-		cutilCheckMsg("Kernel (cuGetMax) execution failed \n");
-			
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		// Configuring the GPU
-		dim3 cuBlock_3(1024, 1, 1);
-		dim3 cuGrid_3((numRows*numRows)/(2*cuBlock_3.x), 1, 1);
-
-		// Invokig the CUDA kernel
-		cuReduction(cuBlock_3, cuGrid_3, devMaxValues, numRows);
-
-		// Checking if kernel execution failed or not
-		cutilCheckMsg("Kernel (cuReduction) execution failed \n");
-
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-		// Download the maxValues array to the host side
-		cutilSafeCall(cudaMemcpy(hostMaxValue, devMaxValues, sizeof(Max)*1, cudaMemcpyDeviceToHost));//outputArraySize
-
-		// Freeing the allocated memory on the device
-		cudaFree(devMaxValues);
-			
-//			int selectedMaxVal = 0;
-//			int indexMaxVal = 0;
-
-//			// Search for the maximum value in all maximum candidates
-//			for (int i = 0; i < (numRows*numRows); i++)
-//			{
-//				if (hostMaxValue[i].val > selectedMaxVal)
-//				{
-//					// Updating the selected values
-//					selectedMaxVal = hostMaxValue[i].val;
-//
-//					// Updating the index
-//					indexMaxVal = i;
-//				}
-//			}
-		
-		cout<< hostMaxValue->val << endl;
-		// Freeing the allocated memory on the host
-		free(hostMaxValue);
-	}
-
-	cout<<"CUDA implementation Done"<<endl;
 }

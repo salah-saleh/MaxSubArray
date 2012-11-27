@@ -48,8 +48,8 @@ int main(int argc, char** argv)
     	MaxSubArray::getMax_CPU_Kad(inputArray, numCores, arrSize_1D, arrSize_1D, numItr);
 
 	// GPU implementation CUDA
-    	std::cout<<"GPU implementation with CUDA"<< std::endl;
-    	MaxSubArray::getMax_CUDA(inputArray, arrSize_1D, arrSize_1D, numItr);
+    	//std::cout<<"GPU implementation with CUDA"<< std::endl;
+    	//MaxSubArray::getMax_CUDA(inputArray, arrSize_1D, arrSize_1D, numItr);
 
 	// Freeing the memory
 	free(inputArray);
