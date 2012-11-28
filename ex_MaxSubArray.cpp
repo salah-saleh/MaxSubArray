@@ -23,7 +23,12 @@ using std::cout;
 using std::endl;
 using std::string;
 
-
+void MaxSubArray::get_walltime_(double* wcTime) 
+{
+	struct timeval tp;
+  	gettimeofday(&tp, NULL);
+  	*wcTime = (double)(tp.tv_sec + tp.tv_usec/1000000.0);
+}
 
 
 void MaxSubArray::readFile(char* fileName, int* inputArray, int numRows, int numCols)
@@ -82,13 +87,14 @@ void MaxSubArray::readFile(char* fileName, int* inputArray, int numRows, int num
  * maximum. In STAGE_2, we perform a reduction process to get the maximum of  
  * these maximums.
  */
-void MaxSubArray::getMax_CPU_Kad(int* inputArray, int numCores, int numRows, int numCols, int numItr)
+void MaxSubArray::getMax_CPU_Kadan(int* inputArray, int numCores, int numRows, int numCols, int numItr)
 {
 	//INFO("Starting CPU implementation : Iterations " + ITS(numItr));
 
 	/* CPU timing parameters */
 	// timer should be placed here	
-		
+	double begin, end;
+	
 	// Iterate to average the results
 	for (int itr = 0; itr < numItr; itr++)
 	{
@@ -98,7 +104,9 @@ void MaxSubArray::getMax_CPU_Kad(int* inputArray, int numCores, int numRows, int
 		* possible combination
 		*/
 		Max* maxValues = (Max*)malloc(sizeof(Max)*numRows);		   
-			
+		
+		for(int iCtr = 0; iCtr<numRows; iCtr++)
+			maxValues[iCtr].val = 0;			
 		/*
 		* Start of parallel region inStream which we are going
 		* to divide numRows on the number of threads, each thread
@@ -123,7 +131,8 @@ void MaxSubArray::getMax_CPU_Kad(int* inputArray, int numCores, int numRows, int
 			int maxVal = 0; 
 
 			// @ STAGE_1 "Starting"
-			#pragma omp single				
+			#pragma omp single
+			MaxSubArray::get_walltime_(&begin);
 			//start = Timers::BoostTimers::getTime_MicroSecond(); //**** timer start
 
 			/* 
@@ -185,16 +194,17 @@ void MaxSubArray::getMax_CPU_Kad(int* inputArray, int numCores, int numRows, int
 		}
 
 		// @ STAGE_1 "Done"
-		//end = Timers::BoostTimers::getTime_MicroSecond(); //**** end timer
 
 		// Calculate the duration of STAGE_1
+		MaxSubArray::get_walltime_(&end);
+		
+		cout<<"Time: "<< (end)-(begin) <<endl;
 		//cpuProfile = Timers::BoostTimers::getDuration(start, end); //**** duration calculation
 
 		int selectedMaxVal = 0;
 		int indexMaxValue=0;
 
 		// @ STAGE_2 "Starting"
-		//start = Timers::BoostTimers::getTime_MicroSecond(); //**** timer start
 
 		// Search for the maximum inputVal inStream all maximum candidates
 		for (int iCtr = 0;  iCtr < numRows; iCtr++)
@@ -209,12 +219,10 @@ void MaxSubArray::getMax_CPU_Kad(int* inputArray, int numCores, int numRows, int
 		}
 		
 		// @ STAGE_2 "Done"
-		//end = Timers::BoostTimers::getTime_MicroSecond(); //**** timer end
 
 		// Calculate the duration for STAGE_2
-		//cpuProfile = Timers::BoostTimers::getDuration(start, end); // duration calculation
 
-		cout<< "Kad: " << maxValues[indexMaxValue].val << " " << maxValues[indexMaxValue].x1 << " " << maxValues[indexMaxValue].y1 << " " << maxValues[indexMaxValue].x2 << " " << maxValues[indexMaxValue].y2 << endl;;
+		cout<< "Kadan: " << maxValues[indexMaxValue].val << " " << maxValues[indexMaxValue].x1 << " " << maxValues[indexMaxValue].y1 << " " << maxValues[indexMaxValue].x2 << " " << maxValues[indexMaxValue].y2 << endl;;
 	}
 
 	cout<<"CPU implementation - Done"<<endl;
@@ -226,12 +234,13 @@ void MaxSubArray::getMax_CPU_Kad(int* inputArray, int numCores, int numRows, int
  * maximum. In STAGE_2, we perform a reduction process to get the maximum of  
  * these maximums.
  */
-void MaxSubArray::getMax_CPU_Dir(int* inputArray, int numCores, int numRows, int numCols, int numItr)
+void MaxSubArray::getMax_CPU_Prefix(int* inputArray, int numCores, int numRows, int numCols, int numItr)
 {
 	//INFO("Starting CPU implementation : Iterations " + ITS(numItr));
 
 	/* CPU timing parameters */
 	// timer should be placed here	
+	double begin, end;
 		
 	// Iterate to average the results
 	for (int itr = 0; itr < numItr; itr++)
@@ -242,6 +251,9 @@ void MaxSubArray::getMax_CPU_Dir(int* inputArray, int numCores, int numRows, int
 		* possible combination
 		*/
 		Max* maxValues = (Max*)malloc(sizeof(Max)*numRows);
+		
+		for(int iCtr = 0; iCtr<numRows; iCtr++)
+			maxValues[iCtr].val = 0;			
 		   
 	   	/*
 	   	* Every element will hold the summation of all elements till 
@@ -275,6 +287,7 @@ void MaxSubArray::getMax_CPU_Dir(int* inputArray, int numCores, int numRows, int
 
 			// @ STAGE_1 "Starting"
 			#pragma omp single				
+			MaxSubArray::get_walltime_(&begin);
 			//start = Timers::BoostTimers::getTime_MicroSecond(); //**** timer start
 
 			// Copy the first row as it is
@@ -363,16 +376,16 @@ void MaxSubArray::getMax_CPU_Dir(int* inputArray, int numCores, int numRows, int
 		}
 
 		// @ STAGE_1 "Done"
-		//end = Timers::BoostTimers::getTime_MicroSecond(); //**** end timer
+		MaxSubArray::get_walltime_(&end);
+		
+		cout<<"Time: "<< (end)-(begin) <<endl;
 
 		// Calculate the duration of STAGE_1
-		//cpuProfile = Timers::BoostTimers::getDuration(start, end); //**** duration calculation
 
 		int selectedMaxVal = 0;
 		int indexMaxValue=0;
 
 		// @ STAGE_2 "Starting"
-		//start = Timers::BoostTimers::getTime_MicroSecond(); //**** timer start
 
 		// Search for the maximum inputVal inStream all maximum candidates
 		for (int iCtr = 0;  iCtr < numRows; iCtr++)
@@ -387,12 +400,10 @@ void MaxSubArray::getMax_CPU_Dir(int* inputArray, int numCores, int numRows, int
 		}
 		
 		// @ STAGE_2 "Done"
-		//end = Timers::BoostTimers::getTime_MicroSecond(); //**** timer end
 
 		// Calculate the duration for STAGE_2
-		//cpuProfile = Timers::BoostTimers::getDuration(start, end); // duration calculation
 
-		cout<< "numRows: " << maxValues[indexMaxValue].val << " " << maxValues[indexMaxValue].x1 << " " << maxValues[indexMaxValue].y1 << " " << maxValues[indexMaxValue].x2 << " " << maxValues[indexMaxValue].y2 << endl;;
+		cout<< "Prefix: " << maxValues[indexMaxValue].val << " " << maxValues[indexMaxValue].x1 << " " << maxValues[indexMaxValue].y1 << " " << maxValues[indexMaxValue].x2 << " " << maxValues[indexMaxValue].y2 << endl;;
 	}
 
 	cout<<"CPU implementation - Done"<<endl;
@@ -405,12 +416,13 @@ void MaxSubArray::getMax_CPU_Dir(int* inputArray, int numCores, int numRows, int
  * maximum. In STAGE_2, we perform a reduction process to get the maximum of  
  * these maximums.
  */
-void MaxSubArray::getMax_CPU(int* inputArray, int numCores, int numRows, int numCols, int numItr)
+void MaxSubArray::getMax_CPU_CUDA(int* inputArray, int numCores, int numRows, int numCols, int numItr)
 {
 	//INFO("Starting CPU implementation : Iterations " + ITS(numItr));
 
 	/* CPU timing parameters */
 	// timer should be placed here	
+	double begin, end;
 
 		
 	// Iterate to average the results
@@ -423,6 +435,8 @@ void MaxSubArray::getMax_CPU(int* inputArray, int numCores, int numRows, int num
 		*/
 		Max* maxValues = (Max*)malloc(sizeof(Max)*numRows*numRows);
 		   
+		for(int iCtr = 0; iCtr<numRows*numRows; iCtr++)
+			maxValues[iCtr].val = 0;			
 	   	/*
 	   	* Every element will hold the summation of all elements till 
 		* it's position (operating on the original input array)
@@ -455,7 +469,7 @@ void MaxSubArray::getMax_CPU(int* inputArray, int numCores, int numRows, int num
 
 			// @ STAGE_1 "Starting"
 			#pragma omp single				
-			//start = Timers::BoostTimers::getTime_MicroSecond(); //**** timer start
+			MaxSubArray::get_walltime_(&begin);
 
 			// Copy the first row as it is
 			#pragma omp for schedule(dynamic)
@@ -548,9 +562,11 @@ void MaxSubArray::getMax_CPU(int* inputArray, int numCores, int numRows, int num
 
 		// @ STAGE_1 "Done"
 		//end = Timers::BoostTimers::getTime_MicroSecond(); //**** end timer
+		MaxSubArray::get_walltime_(&end);
+		
+		cout<<"Time: "<< (end)-(begin) <<endl;
 
 		// Calculate the duration of STAGE_1
-		//cpuProfile = Timers::BoostTimers::getDuration(start, end); //**** duration calculation
 
 		int selectedMaxVal = 0;
 		int indexMaxValue=0;
@@ -571,12 +587,10 @@ void MaxSubArray::getMax_CPU(int* inputArray, int numCores, int numRows, int num
 		}
 		
 		// @ STAGE_2 "Done"
-		//end = Timers::BoostTimers::getTime_MicroSecond(); //**** timer end
 
 		// Calculate the duration for STAGE_2
-		//cpuProfile = Timers::BoostTimers::getDuration(start, end); // duration calculation
 
-		cout<< "numRows*numRows: " << maxValues[indexMaxValue].val << " " << maxValues[indexMaxValue].x1 << " " << maxValues[indexMaxValue].y1 << " " << maxValues[indexMaxValue].x2 << " " << maxValues[indexMaxValue].y2 << endl;
+		cout<< "CUDA: " << maxValues[indexMaxValue].val << " " << maxValues[indexMaxValue].x1 << " " << maxValues[indexMaxValue].y1 << " " << maxValues[indexMaxValue].x2 << " " << maxValues[indexMaxValue].y2 << endl;
 	}
 
 	cout<<"CPU implementation - Done"<<endl;

@@ -36,16 +36,16 @@ int main(int argc, char** argv)
     	MaxSubArray::readFile(fileName, inputArray, arrSize_1D, arrSize_1D);
 
 	// Do the CPU implementation with OpenMP
-    	std::cout<<"CPU implementation with OpenMP-numRows*numRows"<< std::endl;
-    	MaxSubArray::getMax_CPU(inputArray, numCores, arrSize_1D, arrSize_1D, numItr);
+    	std::cout<<"CPU implementation with OpenMP-CUDA"<< std::endl;
+    	MaxSubArray::getMax_CPU_CUDA(inputArray, numCores, arrSize_1D, arrSize_1D, numItr);
 
 	// Do the CPU implementation with OpenMP
-    	std::cout<<"CPU implementation with OpenMP-Kad"<< std::endl;
-    	MaxSubArray::getMax_CPU_Dir(inputArray, numCores, arrSize_1D, arrSize_1D, numItr);
+    	std::cout<<"CPU implementation with OpenMP-Kadan"<< std::endl;
+    	MaxSubArray::getMax_CPU_Kadan(inputArray, numCores, arrSize_1D, arrSize_1D, numItr);
 
 	// Do the CPU implementation with OpenMP
-    	std::cout<<"CPU implementation with OpenMP-numRows"<< std::endl;
-    	MaxSubArray::getMax_CPU_Kad(inputArray, numCores, arrSize_1D, arrSize_1D, numItr);
+    	std::cout<<"CPU implementation with OpenMP-Prefix"<< std::endl;
+    	MaxSubArray::getMax_CPU_Prefix(inputArray, numCores, arrSize_1D, arrSize_1D, numItr);
 
 	// GPU implementation CUDA
     	//std::cout<<"GPU implementation with CUDA"<< std::endl;

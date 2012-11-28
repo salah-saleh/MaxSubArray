@@ -1,6 +1,7 @@
 #ifndef SHARED_H_
 #define SHARED_H_
 
+
 /* This structure represents the selected value and the coordinates of
  * the max sub array */
 struct Max

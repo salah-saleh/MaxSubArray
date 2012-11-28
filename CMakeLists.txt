@@ -39,7 +39,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake)
 INCLUDE(Find_CUDA)
 
 # @CUDA GPU Computing SDK
-INCLUDE(Find_CUDA_SDK)
+#INCLUDE(Find_CUDA_SDK)
 
 # @OpenMP
 INCLUDE(Find_OpenMP)
@@ -48,7 +48,7 @@ INCLUDE(Find_OpenMP)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 # CUDA kernels directory 
-SET(CUDA_KERNELS_DIR ${CMAKE_SOURCE_DIR}/Kernels)
+#SET(CUDA_KERNELS_DIR ${CMAKE_SOURCE_DIR}/Kernels)
 
 INCLUDE_DIRECTORIES(${CUDA_KERNELS_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/inc/)
@@ -57,16 +57,17 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/inc/)
 #########################################################
 #! Compiler Flags
 #########################################################
-set(CMAKE_C_FLAGS " -fpermissive -fPIC -pthread -pipe -DLINUX -D_BOOL -DREQUIRE_IOSTREAM -Wno-deprecated -fno-gnu-keywords -w")
+set(CMAKE_C_FLAGS "-fopenmp -fpermissive -fPIC -pthread -pipe -DLINUX -D_BOOL -DREQUIRE_IOSTREAM -Wno-deprecated -fno-gnu-keywords -w")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
 
 
 #########################################################
 #! Generating executable
 #########################################################
-CUDA_ADD_EXECUTABLE(run.out ex_MaxSubArray.cpp Run.cpp Kernels/cuExternsTest.cu)
+CUDA_ADD_EXECUTABLE(run.out ex_MaxSubArray.cpp Run.cpp) # Kernels/cuExternsTest.cu)
 
 #########################################################
 #! Link the executable against the cuYURI library
 #########################################################
-#TARGET_LINK_LIBRARIES(run MaxSubArray)
+#TARGET_LINK_LIBRARIES(run.out MaxSubArray)
+

@@ -29,16 +29,19 @@
 #include <stdlib.h>
 #include <algorithm>
 #include "Shared.h"
-
+#include <stdlib.h>
+#include <sys/time.h>
+    
 /* @ This struct will hold the maximum of all strips can be found for each row */
 
 
 namespace MaxSubArray
 {
+	void get_walltime_(double* wcTime);
 	void readFile(char* fileName, int* inputArray, int numRows, int numCols);
-	void getMax_CPU(int* inputArray, int numCores, int numRows, int numCols, int numItr);
-	void getMax_CPU_Dir(int* inputArray, int numCores, int numRows, int numCols, int numItr);
-	void getMax_CPU_Kad(int* inputArray, int numCores, int numRows, int numCols, int numItr);	
+	void getMax_CPU_CUDA(int* inputArray, int numCores, int numRows, int numCols, int numItr);
+	void getMax_CPU_Prefix(int* inputArray, int numCores, int numRows, int numCols, int numItr);
+	void getMax_CPU_Kadan(int* inputArray, int numCores, int numRows, int numCols, int numItr);	
 	void getMax_CUDA(int* inputArray, int numRows, int numCols, int numItr);
 }
 
